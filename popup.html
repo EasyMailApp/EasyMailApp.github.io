@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Job Application Assistant</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="header">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <img src="icon.png" width="32" height="32" alt="Logo" style="border-radius: 50%; object-fit: cover; border: 1px solid var(--border-color);">
+      <h1 style="margin: 0; font-size: 20px;">Job Assistant</h1>
+    </div>
+    <div class="nav">
+      <button class="nav-btn active" data-target="add-job">Add</button>
+      <button class="nav-btn" data-target="queue">Queue</button>
+      <button class="nav-btn" data-target="profile">Profile</button>
+      <button class="nav-btn" data-target="settings">Settings</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- (A) Add Job -->
+    <div id="add-job" class="section active">
+      <div class="form-group">
+        <label>Paste Job Post</label>
+        <textarea id="job-text" placeholder="Paste the job description here..."></textarea>
+      </div>
+      <button id="parse-job">Parse Job</button>
+
+      <div id="extracted-info" class="card" style="display: none;">
+        <div class="job-header">
+          <h3 class="job-role" id="ext-role"></h3>
+          <p class="job-company" id="ext-company"></p>
+        </div>
+        <p style="font-size:12px; color:var(--text-muted);" id="ext-emails"></p>
+        <button id="add-to-queue" style="margin-top: 8px;">Add to Queue</button>
+      </div>
+    </div>
+
+    <!-- (B) Queue List -->
+    <div id="queue" class="section">
+      <div class="card" style="margin-bottom: 16px; flex-direction: row; gap: 8px;">
+        <button id="start-queue" style="flex: 1; background-color: var(--success);">Start Auto</button>
+        <button id="pause-queue" style="flex: 1; background-color: var(--danger);">Pause Auto</button>
+      </div>
+      <div id="queue-list">
+        <!-- Job items will be injected here -->
+      </div>
+    </div>
+
+    <!-- (C) Profile -->
+    <div id="profile" class="section">
+      <div class="card">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="prof-name" placeholder="John Doe">
+        </div>
+        <div class="form-group">
+          <label>Email Salutation</label>
+          <select id="prof-salutation">
+            <option value="Dear Hiring Team,">Dear Hiring Team,</option>
+            <option value="Hi,">Hi,</option>
+            <option value="Hello,">Hello,</option>
+            <option value="To the Hiring Manager,">To the Hiring Manager,</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Designation / Role</label>
+          <input type="text" id="prof-role" placeholder="Software Engineer">
+        </div>
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label>Phone Number</label>
+            <input type="checkbox" id="prof-phone-cb" checked>
+          </div>
+          <input type="text" id="prof-phone" placeholder="+1 234 567 890">
+        </div>
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label>Email Address</label>
+            <input type="checkbox" id="prof-email-cb" checked>
+          </div>
+          <input type="text" id="prof-email" placeholder="john@example.com">
+        </div>
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label>GitHub URL</label>
+            <input type="checkbox" id="prof-github-cb" checked>
+          </div>
+          <input type="text" id="prof-github" placeholder="https://github.com/...">
+        </div>
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label>LinkedIn URL</label>
+            <input type="checkbox" id="prof-linkedin-cb" checked>
+          </div>
+          <input type="text" id="prof-linkedin" placeholder="https://linkedin.com/in/...">
+        </div>
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label>Portfolio / Project URL</label>
+            <input type="checkbox" id="prof-portfolio-cb" checked>
+          </div>
+          <input type="text" id="prof-portfolio" placeholder="https://myportfolio.com">
+        </div>
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label>Past Projects URLs</label>
+            <input type="checkbox" id="prof-projects-cb" checked>
+          </div>
+          <textarea id="prof-projects" placeholder="https://project1.com&#10;https://project2.com" style="min-height: 80px;"></textarea>
+        </div>
+        <button id="save-profile" style="margin-top: 12px;">Save Profile</button>
+      </div>
+    </div>
+
+    <!-- (D) Settings -->
+    <div id="settings" class="section">
+      <div class="card">
+        <div class="form-group">
+          <label>Gemini API Key</label>
+          <input type="password" id="gemini-key" placeholder="AIzaSy...">
+          <button id="save-key" class="secondary" style="margin-top: 4px;">Save Key</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="form-group">
+          <label>Google Account</label>
+          <button id="login-google">Login with Google</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="form-group">
+          <label>Resume (PDF)</label>
+          <div class="file-upload">
+            <span>Click to upload PDF</span>
+            <input type="file" id="resume-upload" accept="application/pdf">
+          </div>
+          <div id="file-name" class="file-name"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label>Show Notifications</label>
+            <input type="checkbox" id="setting-notifications" checked>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="form-group">
+          <label>Data Management</label>
+          <button id="download-json" class="secondary">Download JSON</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
